@@ -1,3 +1,3 @@
 # simple_neural_network
 
-Description: I'll be building my first neural network from scratch using Numpy. 
+Description: This is an exercise I'd be doing to build a simple neural network from scratch using Numpy. 
