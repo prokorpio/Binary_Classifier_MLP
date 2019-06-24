@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Except these files..
+!.gitignore
+!helper_functions.py
+!README.md
