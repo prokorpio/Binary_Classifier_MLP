@@ -97,10 +97,10 @@ def sigmoid(x):
 
     return y
 
-def compute_linear(X, W, b, activation):
+def forward_neuron(X, W, b, activation):
     """
     Description: 
-        A single neuron in the computational graph, computes Z and A
+        A single layer in the forward computational graph, computes Z and A
         
     Arguments:
         X = input matrix to the neuron, shaped (n_x,m)
@@ -116,13 +116,13 @@ def compute_linear(X, W, b, activation):
 
     if activation == 'sigmoid':
         A = sigmoid(Z)
-    elif activation == 'tanh':
-        A = np.tanh(Z)
+    elif activation == 'relu':
+        A = np.maximum(0,Z)
 
     return A
 
                 
-def compute_cost(Y, Y_hat, type='binary_cross_entropy'):
+def compute_cost(Y, Y_hat, set_type='binary_cross_entropy'):
     """
     Description:
         Computes different types of costs
@@ -136,7 +136,7 @@ def compute_cost(Y, Y_hat, type='binary_cross_entropy'):
     """
     m = len(Y)
     
-    if type == 'binary_cross_entropy':
+    if set_type == 'binary_cross_entropy':
         J = (-1/m)*(np.dot(Y,np.log(Y_hat).T) + np.dot(1-Y,np.log(1-Y_hat).T))
 
 
@@ -164,6 +164,42 @@ def forward_prop(X, Y, parameters, hid_activation, out_activation, iterations):
     """
 
 # Backward Propagation
+def backward_neuron(dA,Z,A_prev,parameters,set_type):
+    """
+    Description: 
+        Computes a bakward propagation on a single layer:
+            dJ/d(W or b) = (dJ/dA)(dA/dZ)(dZ/d(W or b))
+
+    Arguments: 
+        dA = partial of the current layer's activation wrt J
+        Z = current Z value of the layer, needed to compute dZ
+        A_prev = the input matrix for the current layer, needed for dW
+        parameters = dict of the layer's W and b
+        set_type = type of activation to differentiate
+    Outputs:
+        dW = partial of the layer's W wrt J
+        db = partial of the layer's b wrt J
+        dA_prev = dA of the layer to the left  
+    """
+
+    m = len(W,axis=1) # num of features is num of columns
+    if set_type == 'relu':            
+        dg_dz = np.zeros(Z.shape)
+        dg_dz[Z > 0] = 1          #derivative of relu wrt z is 1 for z>0
+    elif set_type == 'sigmoid':
+        dg_dz = simoid(Z)*(1 - sigmoid(Z))
+
+    dZ = dA * dg_dz
+    dW = (1/m) * np.dot(dZ,A_prev.T)
+    db = (1/m) * np.sum(dZ,axis=1,keepdims=True) 
+                        # keepdims will keep the dimention of the axis we
+                        # perform the summation in, instead of eliminating it
+    dA_prev = np.dot(W.T,dZ) # dA of the layer to the left 
+    
+    
+    return dA_prev, dW, db
+
+
     # compute dAL
     # for each of the layers, starting from the output
         #compute dZ
