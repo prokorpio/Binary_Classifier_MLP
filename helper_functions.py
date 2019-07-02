@@ -120,7 +120,7 @@ def compute_cost(Y, Y_hat, loss_type='binary_cross_entropy'):
     m = Y.shape[1] 
     
     if loss_type == 'binary_cross_entropy':
-        J = (-1/m)*(np.dot(Y,np.log(Y_hat).T) + np.dot(1-Y,np.log(1-Y_hat).T))
+        J = (-1./m)*(np.dot(Y,np.log(Y_hat).T) + np.dot(1-Y,np.log(1-Y_hat).T))
 
 
     return J
@@ -181,3 +181,38 @@ def optimize(parameter, grad, learning_rate=0.0075):
     parameter -= learning_rate*grad     # modify parameter object
 
         
+def predict(parameters, X, Y, hidden_act_type, output_act_type):
+    """
+        Description:
+            Performs prediction on the test set
+        Arguments:
+            parameters = dict of trained weights and biases
+            X = matrix of pre-processed input data
+            Y = correct labels of X  
+            hidden_act_type = activation function used for hidden layer
+            output_act_type = activation function used for output layer
+        Outputs:
+            predictions = predicted labels for test set
+
+    """
+
+    ## Forward Prop
+    input_data = X
+    num_of_layers = len(parameters)//2
+    m = X.shape[1]
+    # for hidden layers:     
+    for l in range(1,num_of_layers):  
+        _, A = forward_layer(input_data, parameters['W'+str(l)], \
+                                      parameters['b'+str(l)], hidden_act_type)
+        input_data = A 
+    # for output layer:     
+    _, y_hat = forward_layer(input_data, parameters['W'+str(num_of_layers)],\
+                             parameters['b'+str(num_of_layers)], output_act_type)
+    
+    predictions = np.zeros((1,m))
+    predictions[y_hat > 0.5] = 1
+
+    print("Test Set Accuracy = " + str(np.sum((predictions == Y)/m)))
+
+
+    return predictions

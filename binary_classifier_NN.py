@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import h5py
 from helper_functions import *
 
+
+np.random.seed(1)
 ## Load Dataset
 train_set_x_orig, train_set_y_orig, classes = \
     load_dataset('datasets/train_catvnoncat.h5','train_set',get_class=True)
@@ -27,14 +29,14 @@ test_set_y = test_set_y/255
 #print(test_set_y.shape)
 
 ## Initialize Model
-layer_dims = [train_set_x.shape[0], 20, 7, 5, 1]
+layer_dims = [train_set_x.shape[0], 7, 1]
 parameters = initialize_parameters(layer_dims)
 
 ## Train Model
 num_of_layers = len(layer_dims)
 hidden_act_type = 'relu'
 output_act_type = 'sigmoid'
-num_of_iterations = 500
+num_of_iterations = 10
 costs = [] # list of cost values
 
 for i in range(num_of_iterations): 
@@ -55,7 +57,7 @@ for i in range(num_of_iterations):
     caches.append(cache) # caches will have indeces [0, .. ,num_of_layers-2]
                          # because for loop started with 1...
 
-    # Compute Cost (for entire train set)
+    # Compute Cost (for entire train set examples)
     cost = compute_cost(train_set_y, y_hat, \
                             loss_type='binary_cross_entropy') 
        
@@ -70,7 +72,6 @@ for i in range(num_of_iterations):
     dA_prev, dW, db = backward_layer(dA, Z, A_prev, W, output_act_type) 
     grads["dW" + str(num_of_layers - 1)] = dW
     grads["db" + str(num_of_layers - 1)] = db
-
     # for hidden layers:
     for l in reversed(range(1,num_of_layers-1)):    # starts at l = num-2  
         dA = dA_prev
@@ -90,14 +91,20 @@ for i in range(num_of_iterations):
     if i % 100 == 0:
         costs.append(cost)
         print("Cost after iteration {}: {}".format(i,np.squeeze(cost)))
+                
+                
+## Print Train Set Accuracy
+y_hat[y_hat > 0.5] = 1
+y_hat[y_hat <= 0.5] = 0
+print("Train Set Accuracy = ", str(np.sum((y_hat == train_set_y)/y_hat.shape[1])))
+
 
 ## Print Cost Plot
-plt.plot(np.squeeze(costs))
-plt.ylabel('cost')
-plt.xlabel('iterations (per hundreds)')
-plt.show()  
+#plt.plot(np.squeeze(costs))
+#plt.ylabel('cost')
+#plt.xlabel('iterations (per hundreds)')
+#plt.show()  
 
                 
 ## Predict
-
-                
+predict(parameters, test_set_x, test_set_y, 'relu','sigmoid')
