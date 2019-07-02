@@ -117,7 +117,7 @@ def compute_cost(Y, Y_hat, loss_type='binary_cross_entropy'):
     Outputs:
         J = scalar cost value
     """
-    m = len(Y)
+    m = Y.shape[1] 
     
     if loss_type == 'binary_cross_entropy':
         J = (-1/m)*(np.dot(Y,np.log(Y_hat).T) + np.dot(1-Y,np.log(1-Y_hat).T))
@@ -125,26 +125,6 @@ def compute_cost(Y, Y_hat, loss_type='binary_cross_entropy'):
 
     return J
 
-                
-#def forward_prop(X, Y, parameters, hid_activation, out_activation, iterations):
-#   """
-#   Description:
-#       Performs one forward prop through the paramaters
-#
-#   Arguments:
-#       X = input data
-#       Y = true labels
-#       parameters = dictionary of weights and biases of the network
-#                  = {W#:matrix,  
-#                     b#:vector}
-#       hid_activation = activation in hidden layers
-#       out_activation = activation in output layer
-#       iterations = number of iterations
-#
-#   Outputs:
-#      cost = the cost of the propagation
-#      cache = cache of computed values (determine which is needed)
-#   """
 
 # Backward Propagation
 def backward_layer(dA,Z,A_prev,W,activation_type):
@@ -165,12 +145,12 @@ def backward_layer(dA,Z,A_prev,W,activation_type):
         dA_prev = dA of the layer to the left  
     """
 
-    m = len(W,axis=1) # num of features is num of columns
+    m = W.shape[1] # num of features is num of columns
     if activation_type == 'relu':            
         dg_dz = np.zeros(Z.shape)
         dg_dz[Z > 0] = 1          #derivative of relu wrt z is 1 for z>0
     elif activation_type == 'sigmoid':
-        dg_dz = simoid(Z)*(1 - sigmoid(Z))
+        dg_dz = sigmoid(Z)*(1 - sigmoid(Z))
 
     dZ = dA * dg_dz
     dW = (1/m) * np.dot(dZ,A_prev.T)
@@ -184,7 +164,7 @@ def backward_layer(dA,Z,A_prev,W,activation_type):
 
 
 # Optimize: Gradient Descent
-def optimize(parameter, grad, learning_rate=0.001):
+def optimize(parameter, grad, learning_rate=0.0075):
     """
         Description: 
             Performs parameter (weights or biases) update for a layer
@@ -194,12 +174,10 @@ def optimize(parameter, grad, learning_rate=0.001):
             grad = dW or db
             learning_rate = to be used for gradient descent formula
         Outputs:
-            parameter = updated parameters for the layer
-            
+            none, mutable argument parameter is modified    
+             
     """
     # update dW or db
-    parameter = parameter - learning_rate*grad
+    parameter -= learning_rate*grad     # modify parameter object
 
-
-    return parameter
         
