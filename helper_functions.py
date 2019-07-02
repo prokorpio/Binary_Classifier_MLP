@@ -43,7 +43,7 @@ def initialize_parameters(layer_dims):
                    = {W#:matrix,  
                       b#:vector}
     """
-    np.random.seed(1)               # to get consistent initial vals 
+    np.random.seed(3)               # to get consistent initial vals 
     num_of_layers = len(layer_dims) # input layer included            
     parameters = {}                 # initialize dictionary 
                 
@@ -145,7 +145,7 @@ def backward_layer(dA,Z,A_prev,W,activation_type):
         dA_prev = dA of the layer to the left  
     """
 
-    m = W.shape[1] # num of features is num of columns
+    m = A_prev.shape[1] # num of examples is num of columns
     if activation_type == 'relu':            
         dg_dz = np.zeros(Z.shape)
         dg_dz[Z > 0] = 1          #derivative of relu wrt z is 1 for z>0
@@ -197,10 +197,10 @@ def predict(parameters, X, Y, hidden_act_type, output_act_type):
     """
 
     ## Forward Prop
-    input_data = X
     num_of_layers = len(parameters)//2
     m = X.shape[1]
     # for hidden layers:     
+    input_data = X
     for l in range(1,num_of_layers):  
         _, A = forward_layer(input_data, parameters['W'+str(l)], \
                                       parameters['b'+str(l)], hidden_act_type)
@@ -211,7 +211,8 @@ def predict(parameters, X, Y, hidden_act_type, output_act_type):
     
     predictions = np.zeros((1,m))
     predictions[y_hat > 0.5] = 1
-
+    print(predictions)
+    print(Y)
     print("Test Set Accuracy = " + str(np.sum((predictions == Y)/m)))
 
 
