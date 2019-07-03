@@ -52,7 +52,6 @@ for i in range(num_of_iterations):
         cache, A = forward_layer(input_data, parameters['W'+str(l)], \
                                       parameters['b'+str(l)], hidden_act_type)
         caches.append(cache)   # append tuple to list
-#        print(input_data[0] - A[0])
         input_data = A 
     # for output layer:     
     cache, y_hat = forward_layer(input_data, parameters['W'+str(num_of_layers-1)],\
