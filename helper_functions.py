@@ -43,13 +43,14 @@ def initialize_parameters(layer_dims):
                    = {W#:matrix,  
                       b#:vector}
     """
-    np.random.seed(3)               # to get consistent initial vals 
+    np.random.seed(1)               # to get consistent initial vals 
     num_of_layers = len(layer_dims) # input layer included            
     parameters = {}                 # initialize dictionary 
                 
     for i in range(1,num_of_layers):
         parameters['W'+str(i)] = \
-            np.random.randn(layer_dims[i],layer_dims[i-1])*0.01
+            np.random.randn(layer_dims[i],layer_dims[i-1])/ \
+        np.sqrt(layer_dims[i-1]) #*0.01
             # note that we multiply 0.01 to make the weights very small
             # and we also use randn to use a normal distribution
         parameters['b'+str(i)] = np.zeros((layer_dims[i],1))
@@ -105,6 +106,7 @@ def forward_layer(A_prev, W, b, activation_type):
     return cache, A 
 
                 
+                
 def compute_cost(Y, Y_hat, loss_type='binary_cross_entropy'):
     """
     Description:
@@ -147,14 +149,14 @@ def backward_layer(dA,Z,A_prev,W,activation_type):
 
     m = A_prev.shape[1] # num of examples is num of columns
     if activation_type == 'relu':            
-        dg_dz = np.zeros(Z.shape)
-        dg_dz[Z > 0] = 1          #derivative of relu wrt z is 1 for z>0
+        dg_dz = np.int64(Z>0)   # converts T/F matrix of condition to 1/0
+                                # derivative of relu wrt z is 1 for z>0
     elif activation_type == 'sigmoid':
         dg_dz = sigmoid(Z)*(1 - sigmoid(Z))
 
     dZ = dA * dg_dz
-    dW = (1/m) * np.dot(dZ,A_prev.T)
-    db = (1/m) * np.sum(dZ,axis=1,keepdims=True) 
+    dW = (1/m) * np.dot(dZ, A_prev.T)
+    db = (1/m) * np.sum(dZ, axis=1, keepdims=True) 
                         # keepdims will keep the dimention of the axis we
                         # perform the summation in, instead of eliminating it
     dA_prev = np.dot(W.T,dZ) # dA of the layer to the left 
@@ -209,10 +211,7 @@ def predict(parameters, X, Y, hidden_act_type, output_act_type):
     _, y_hat = forward_layer(input_data, parameters['W'+str(num_of_layers)],\
                              parameters['b'+str(num_of_layers)], output_act_type)
     
-    predictions = np.zeros((1,m))
-    predictions[y_hat > 0.5] = 1
-    print(predictions)
-    print(Y)
+    predictions = np.int64(y_hat > 0.5)
     print("Test Set Accuracy = " + str(np.sum((predictions == Y)/m)))
 
 
