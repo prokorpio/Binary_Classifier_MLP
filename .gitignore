@@ -5,4 +5,5 @@
 !.gitignore
 !helper_functions.py
 !binary_classifier_NN.py
+!gradient_checking.py
 !README.md
