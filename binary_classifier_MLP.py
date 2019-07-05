@@ -105,10 +105,10 @@ print("Train Set Accuracy = ", \
 
 
 ## Print Cost Plot
-#plt.plot(np.squeeze(costs))
-#plt.ylabel('cost')
-#plt.xlabel('iterations (per hundreds)')
-#plt.show()  
+plt.plot(np.squeeze(costs))
+plt.ylabel('cost')
+plt.xlabel('iterations (per hundreds)')
+plt.show()  
 
                 
 ## Predict
