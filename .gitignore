@@ -3,6 +3,12 @@
 
 # Except these files..
 !.gitignore
+!datasets/
+
+datasets/*
+!datasets/train_catvnoncat.h5
+!datasets/test_catvnoncat.h5
+
 !helper_functions.py
 !binary_classifier_MLP.py
 !gradient_checking.py
